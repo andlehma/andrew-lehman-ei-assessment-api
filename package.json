@@ -1,0 +1,11 @@
+{
+  "name": "andrew-lehman-ei-assessment-api",
+  "version": "0.0.1",
+  "description": "Andrew Lehman's assessment for Expert Institute",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrew Lehman",
+  "license": "ISC"
+}
