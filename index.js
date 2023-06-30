@@ -16,8 +16,9 @@ app.get('/assets', async (req, res) => {
 		maxPageSize : req.query.limit ?
 		req.query.limit : defaultPageSize;
 	const offset = req.query.offset ? req.query.offset : 0;
+	const search = req.query.search ? req.query.search : '';
 
-	res.send(await getAssets(limit, offset));
+	res.send(await getAssets(limit, offset, search));
 });
 
 app.get('/users', async (req, res) => {

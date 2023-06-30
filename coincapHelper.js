@@ -10,9 +10,13 @@ const gotOptions = {
 	},
 };
 
-const getAssets = async (limit, offset) => {
-	const { data } = await got.get(`assets?limit=${limit}&offset=${offset}`, gotOptions).json();
-	return data;
+const getAssets = async (limit, offset, search) => {
+	try {
+		const { data } = await got.get(`assets?limit=${limit}&offset=${offset}&search=${search}`, gotOptions).json();
+		return data;
+	} catch (error) {
+		return error;
+	}
 };
 
 export { getAssets };

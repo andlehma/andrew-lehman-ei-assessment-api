@@ -18,11 +18,12 @@ Which means that if anyone is reading this, they must have gone back on the earl
 
 Lists all asset types
 
-## GET `/assets?limit=int&offset=int`
+### Params
 
-Lists all asset types, allows user to specify the page size and offset of the response.
-For example, `?limit=10&offset=35` will get assets 36-45.
-
+* `limit` specifies how many assets to return
+* `offset` specifies which asset to start the page on
+    * For example, `?limit=10&offset=35` will return assets 36-45.
+* `search` allows filtering on the id of the asset
 
 ## GET `/users`
 Lists all users in the database. Definitely wouldn't want to have this in a production app, but it's useful for this demo.
