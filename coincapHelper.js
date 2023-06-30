@@ -27,7 +27,8 @@ const getAssets = async (limit, offset, search, sort) => {
 		// only sort if the sort param is valid
 		if (data[0][sort]) {
 			data.sort((a, b) => {
-				if (parseFloat(a[sort])) { // sort param is numeric
+				if (parseFloat(a[sort])) {
+					// sort param is numeric
 					return parseFloat(b[sort]) - parseFloat(a[sort]);
 				} else {
 					return a[sort].localeCompare(b[sort]);
@@ -45,4 +46,22 @@ const getAssets = async (limit, offset, search, sort) => {
 	}
 };
 
-export { getAssets };
+const getAsset = async (id) => {
+	try {
+		const { data } = await got.get(`assets/${id}`, gotOptions).json();
+		return data;
+	} catch (error) {
+		return error;
+	}
+};
+
+const convertToUsd = async (id, amount) => {
+	try {
+		const { data } = await got.get(`assets/${id}`, gotOptions).json();
+		return data.priceUsd * amount;
+	} catch (error) {
+		return error;
+	}
+};
+
+export { getAssets, getAsset, convertToUsd };

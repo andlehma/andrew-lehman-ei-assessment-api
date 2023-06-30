@@ -27,6 +27,15 @@ Lists all asset types
 * `sort` specifies which key to sort on
     * defaults to descending, put `-` in front of the parameter for ascending. ex: `?sort=-priceUsd`
 
+## GET `/assets/{{id}}`
+
+Returns details for the specified asset
+
+## GET `/convert/{{id}}`
+
+Converts the specified asset to usd. Provide an `amount` in the query parameters
+* ex: `/convert/bitcoin?amount=3.5`
+
 ## GET `/users`
 Lists all users in the database. Definitely wouldn't want to have this in a production app, but it's useful for this demo.
 
@@ -46,9 +55,8 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
 
 # TODO
-* View asset details (volume, pricing, etc)
-* Convert asset value to USD
 * Require ruidmentary authentication
 * Allow users to add/remove assets from their wallet
 * Allow users to get current value in USD of any asset in their wallet
 * Allow users to get net gain/loss over period of holding
+* Add test suite
