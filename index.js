@@ -1,7 +1,13 @@
 import express from 'express';
 
 import { getAssets, getAsset, convertToUsd } from './coincapHelper.js';
-import { initDB, selectUsers, selectAssets } from './database/database.js';
+import {
+	initDB,
+	selectUsers,
+	selectAssets,
+	getUser,
+	getMyAssets,
+} from './database/database.js';
 
 const app = express();
 const port = 3000;
@@ -33,17 +39,38 @@ app.get('/assets/:id', async (req, res) => {
 app.get('/convert/:id', async (req, res) => {
 	const amount = req.query.amount ? req.query.amount : 1;
 	const value = await convertToUsd(req.params.id, amount);
-	res.send({assetId: req.params.id, amount: amount, usdValue: value});
-})
+	res.send({ assetId: req.params.id, amount: amount, usdValue: value });
+});
 
 app.get('/users', async (req, res) => {
 	const users = await selectUsers();
 	res.send(users);
 });
 
+app.get('/user/:id', async (req, res) => {
+	const user = await getUser(req.params.id);
+	res.send(user);
+});
+
 app.get('/userAssets', async (req, res) => {
 	const assets = await selectAssets();
 	res.send(assets);
+});
+
+app.get('/myAssets', async (req, res) => {
+	if (req.headers.authorization) {
+		if (req.headers.authorization.startsWith('Bearer ')) {
+			const userId = parseInt(
+				req.headers.authorization.slice('Bearer '.length)
+			);
+			const assets = await getMyAssets(userId);
+			res.send(assets);
+		} else {
+			res.send('Authorization should be in the form of a bearer token');
+		}
+	} else {
+		res.send('Authorization required');
+	}
 });
 
 app.listen(port, async () => {

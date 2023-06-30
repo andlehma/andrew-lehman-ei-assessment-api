@@ -37,10 +37,26 @@ Converts the specified asset to usd. Provide an `amount` in the query parameters
 * ex: `/convert/bitcoin?amount=3.5`
 
 ## GET `/users`
+
 Lists all users in the database. Definitely wouldn't want to have this in a production app, but it's useful for this demo.
 
+## GET `/user/{{id}}`
+
+Returns details about the specified user.
+
 ## GET `/userAssets`
+
 Lists all assets owned by users. Again, this wouldn't be exposed in a real app.
+
+## GET `/myAssets`
+
+Lists assets owned by the specified user.
+
+Requres an authorization token.
+
+For the purposes of this demo, the authorization token is equivalent to the User ID. In a real application, this would be a secure token which is refreshed periodically and on every login.
+
+Token should be in the form `Bearer {{id}}` and should be passed as an `authorization` header.
 
 # Limitations
 Because of the time constraint, the scope of this project is quite limited.
@@ -55,7 +71,6 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
 
 # TODO
-* Require ruidmentary authentication
 * Allow users to add/remove assets from their wallet
 * Allow users to get current value in USD of any asset in their wallet
 * Allow users to get net gain/loss over period of holding
