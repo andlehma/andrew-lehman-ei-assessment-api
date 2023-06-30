@@ -10,9 +10,35 @@ const gotOptions = {
 	},
 };
 
-const getAssets = async (limit, offset, search) => {
+const getAssets = async (limit, offset, search, sort) => {
 	try {
-		const { data } = await got.get(`assets?limit=${limit}&offset=${offset}&search=${search}`, gotOptions).json();
+		const { data } = await got
+			.get(
+				`assets?limit=${limit}&offset=${offset}&search=${search}`,
+				gotOptions
+			)
+			.json();
+
+		const asc = sort[0] === '-';
+		if (asc) {
+			sort = sort.slice(1);
+		}
+
+		// only sort if the sort param is valid
+		if (data[0][sort]) {
+			data.sort((a, b) => {
+				if (parseFloat(a[sort])) { // sort param is numeric
+					return parseFloat(b[sort]) - parseFloat(a[sort]);
+				} else {
+					return a[sort].localeCompare(b[sort]);
+				}
+			});
+
+			if (asc) {
+				data.reverse();
+			}
+		}
+
 		return data;
 	} catch (error) {
 		return error;

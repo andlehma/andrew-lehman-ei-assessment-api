@@ -24,6 +24,8 @@ Lists all asset types
 * `offset` specifies which asset to start the page on
     * For example, `?limit=10&offset=35` will return assets 36-45.
 * `search` allows filtering on the id of the asset
+* `sort` specifies which key to sort on
+    * defaults to descending, put `-` in front of the parameter for ascending. ex: `?sort=-priceUsd`
 
 ## GET `/users`
 Lists all users in the database. Definitely wouldn't want to have this in a production app, but it's useful for this demo.
@@ -44,7 +46,6 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
 
 # TODO
-* Filter/sort on the `/assets` endpoint
 * View asset details (volume, pricing, etc)
 * Convert asset value to USD
 * Require ruidmentary authentication
