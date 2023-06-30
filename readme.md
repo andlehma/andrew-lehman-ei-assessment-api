@@ -18,16 +18,11 @@ Which means that if anyone is reading this, they must have gone back on the earl
 
 Lists all asset types
 
-## POST `/assets`
+## GET `/assets?limit=int&offset=int`
 
-Paginated asset types. Specify page size and page number in the body of the request
-```json
-{
-    "pageSize": 20,
-    "pageNumber": 3
-}
-```
-Defaults to page size 10, page 1
+Lists all asset types, allows user to specify the page size and offset of the response.
+For example, `?limit=10&offset=35` will get assets 36-45.
+
 
 ## GET `/users`
 Lists all users in the database. Definitely wouldn't want to have this in a production app, but it's useful for this demo.

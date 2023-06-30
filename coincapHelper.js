@@ -10,8 +10,8 @@ const gotOptions = {
 	},
 };
 
-const getAssets = async () => {
-	const { data } = await got.get('assets', gotOptions).json();
+const getAssets = async (limit, offset) => {
+	const { data } = await got.get(`assets?limit=${limit}&offset=${offset}`, gotOptions).json();
 	return data;
 };
 
