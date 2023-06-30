@@ -76,7 +76,10 @@ app.get('/userAssets', async (req, res) => {
 app.get('/myAssets', async (req, res) => {
 	checkAuth(req, async (userId) => {
 		const assets = await getMyAssets(userId);
-		res.send(assets);
+		const totalValue = assets
+			.reduce((acc, curr) => acc + curr.valueInUSD, 0)
+			.toFixed(2);
+		res.send({ totalValue: totalValue, assets: assets });
 	});
 });
 

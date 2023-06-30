@@ -76,7 +76,7 @@ To remove assets, provide a negative amount.
 Because of the time constraint, the scope of this project is quite limited.
 
 ## Security
-I have decided that security is entirely out of scope. Users will, once I add this feature, need to send a user ID with any request to the API, but those IDs will not be secure at all. In a real app like this, especially one dealing with money, security is, of course, hugely important. However, I am under limited time, and security is really hard.
+I have decided that security is entirely out of scope. For user-specific tasks, an authorization token is requird, but it's just the User ID, which is not secure at all. In a real app like this, especially one dealing with money, security is, of course, hugely important. However, I am under limited time, and security is really hard.
 
 ## Database
 I'm using a SQLite database for this project. The database is destroyed and re-created every time the app is run. This makes local testing and development much simpler. Also, I am not a DB admin, so my schema and my SQL scripts could probably be better.
