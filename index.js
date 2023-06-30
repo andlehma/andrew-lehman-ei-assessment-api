@@ -7,6 +7,7 @@ import {
 	selectAssets,
 	getUser,
 	getMyAssets,
+	addAssets,
 } from './database/database.js';
 
 const app = express();
@@ -16,6 +17,21 @@ const maxPageSize = 2000;
 const defaultPageSize = 100;
 
 app.use(express.json());
+
+const checkAuth = (req, callback) => {
+	if (req.headers.authorization) {
+		if (req.headers.authorization.startsWith('Bearer ')) {
+			const userId = parseInt(
+				req.headers.authorization.slice('Bearer '.length)
+			);
+			callback(userId);
+		} else {
+			res.send('Authorization should be in the form of a bearer token');
+		}
+	} else {
+		res.send('Authorization required');
+	}
+};
 
 app.get('/assets', async (req, res) => {
 	const limit =
@@ -58,19 +74,17 @@ app.get('/userAssets', async (req, res) => {
 });
 
 app.get('/myAssets', async (req, res) => {
-	if (req.headers.authorization) {
-		if (req.headers.authorization.startsWith('Bearer ')) {
-			const userId = parseInt(
-				req.headers.authorization.slice('Bearer '.length)
-			);
-			const assets = await getMyAssets(userId);
-			res.send(assets);
-		} else {
-			res.send('Authorization should be in the form of a bearer token');
-		}
-	} else {
-		res.send('Authorization required');
-	}
+	checkAuth(req, async (userId) => {
+		const assets = await getMyAssets(userId);
+		res.send(assets);
+	});
+});
+
+app.post('/addAssets', async (req, res) => {
+	checkAuth(req, async (userId) => {
+		const asset = await addAssets(userId, req.body.symbol, req.body.amount);
+		res.send(asset);
+	});
 });
 
 app.listen(port, async () => {

@@ -89,4 +89,30 @@ const getMyAssets = async (id) => {
 	}
 };
 
-export { initDB, selectUsers, selectAssets, getUser, getMyAssets };
+const addAssets = async (userId, symbol, amount) => {
+	const db = await getDBConnection();
+
+	try {
+		const existingAsset = await db.get(
+			`SELECT * From User_Assets WHERE User_ID = ${userId} AND Symbol = "${symbol}"`
+		);
+		if (existingAsset) {
+			const newQuant = existingAsset.Quantity + amount;
+			await db.exec(
+				`UPDATE User_Assets SET Quantity = ${newQuant} WHERE User_ID = ${userId} AND Symbol = "${symbol}"`
+			);
+		} else {
+			await db.exec(
+				`INSERT INTO User_Assets VALUES ("${symbol}", ${amount}, ${userId})`
+			);
+		}
+		const updatedAsset = await db.get(
+			`SELECT * From User_Assets WHERE User_ID = ${userId} AND Symbol = "${symbol}"`
+		);
+		return updatedAsset;
+	} catch (error) {
+		return `Error adding assets: ${error}`;
+	}
+};
+
+export { initDB, selectUsers, selectAssets, getUser, getMyAssets, addAssets };

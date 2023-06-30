@@ -58,6 +58,20 @@ For the purposes of this demo, the authorization token is equivalent to the User
 
 Token should be in the form `Bearer {{id}}` and should be passed as an `authorization` header.
 
+## POST `/addAssets`
+
+Requires an authorization token.
+
+Requires a body with a symbol and an amount
+```json
+{
+    "symbol": "ETH",
+    "amount": 7.89
+}
+```
+
+To remove assets, provide a negative amount.
+
 # Limitations
 Because of the time constraint, the scope of this project is quite limited.
 
@@ -71,7 +85,6 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
 
 # TODO
-* Allow users to add/remove assets from their wallet
 * Allow users to get current value in USD of any asset in their wallet
 * Allow users to get net gain/loss over period of holding
 * Add test suite
