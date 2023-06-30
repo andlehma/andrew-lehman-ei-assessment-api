@@ -62,10 +62,10 @@ Token should be in the form `Bearer {{id}}` and should be passed as an `authoriz
 
 Requires an authorization token.
 
-Requires a body with a symbol and an amount
+Requires a body with an asset ID and an amount
 ```json
 {
-    "symbol": "ETH",
+    "assetId": "ethereum",
     "amount": 7.89
 }
 ```
@@ -85,6 +85,5 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
 
 # TODO
-* Allow users to get current value in USD of any asset in their wallet
 * Allow users to get net gain/loss over period of holding
 * Add test suite

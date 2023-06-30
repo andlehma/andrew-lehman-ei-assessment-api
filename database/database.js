@@ -3,6 +3,7 @@ import { open } from 'sqlite';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 import * as url from 'url';
+import { convertToUsd } from '../coincapHelper.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -83,31 +84,39 @@ const getMyAssets = async (id) => {
 	const db = await getDBConnection();
 
 	try {
-		return await db.all(`SELECT * FROM User_Assets WHERE User_ID = ${id}`);
+		let assets = await db.all(
+			`SELECT * FROM User_Assets WHERE User_ID = ${id}`
+		);
+		return await Promise.all(assets.map(async (asset) => {
+			return {
+				...asset,
+				valueInUSD: await convertToUsd(asset.AssetID, asset.Quantity),
+			};
+		}));
 	} catch (error) {
 		return `Error getting assets: ${error}`;
 	}
 };
 
-const addAssets = async (userId, symbol, amount) => {
+const addAssets = async (userId, assetId, amount) => {
 	const db = await getDBConnection();
 
 	try {
 		const existingAsset = await db.get(
-			`SELECT * From User_Assets WHERE User_ID = ${userId} AND Symbol = "${symbol}"`
+			`SELECT * From User_Assets WHERE User_ID = ${userId} AND AssetID = "${assetId}"`
 		);
 		if (existingAsset) {
 			const newQuant = existingAsset.Quantity + amount;
 			await db.exec(
-				`UPDATE User_Assets SET Quantity = ${newQuant} WHERE User_ID = ${userId} AND Symbol = "${symbol}"`
+				`UPDATE User_Assets SET Quantity = ${newQuant} WHERE User_ID = ${userId} AND AssetID = "${assetId}"`
 			);
 		} else {
 			await db.exec(
-				`INSERT INTO User_Assets VALUES ("${symbol}", ${amount}, ${userId})`
+				`INSERT INTO User_Assets VALUES ("${assetId}", ${amount}, ${userId})`
 			);
 		}
 		const updatedAsset = await db.get(
-			`SELECT * From User_Assets WHERE User_ID = ${userId} AND Symbol = "${symbol}"`
+			`SELECT * From User_Assets WHERE User_ID = ${userId} AND AssetID = "${assetId}"`
 		);
 		return updatedAsset;
 	} catch (error) {

@@ -82,7 +82,8 @@ app.get('/myAssets', async (req, res) => {
 
 app.post('/addAssets', async (req, res) => {
 	checkAuth(req, async (userId) => {
-		const asset = await addAssets(userId, req.body.symbol, req.body.amount);
+		// should probably check that the assetId is valid
+		const asset = await addAssets(userId, req.body.assetId, req.body.amount);
 		res.send(asset);
 	});
 });
