@@ -12,6 +12,29 @@ node index.js
 By the time I send this to the team at EI, I will have packaged it into an executable.
 Which means that if anyone is reading this, they must have gone back on the earlier commits ;)
 
+# API Endpoints
+
+## GET `/assets`
+
+Lists all asset types
+
+## POST `/assets`
+
+Paginated asset types. Specify page size and page number in the body of the request
+```json
+{
+    "pageSize": 20,
+    "pageNumber": 3
+}
+```
+Defaults to page size 10, page 1
+
+## GET `/users`
+Lists all users in the database. Definitely wouldn't want to have this in a production app, but it's useful for this demo.
+
+## GET `/userAssets`
+Lists all assets owned by users. Again, this wouldn't be exposed in a real app.
+
 # Limitations
 Because of the time constraint, the scope of this project is quite limited.
 
@@ -25,7 +48,6 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
 
 # TODO
-* Pagination on the `/assets` endpoint
 * Filter/sort on the `/assets` endpoint
 * View asset details (volume, pricing, etc)
 * Convert asset value to USD
