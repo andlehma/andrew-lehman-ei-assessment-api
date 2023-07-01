@@ -10,7 +10,7 @@ const gotOptions = {
 	},
 };
 
-const getAssets = async (limit, offset, search, sort) => {
+const getAssets = async (limit, offset, search, sortParam) => {
 	try {
 		const { data } = await got
 			.get(
@@ -19,31 +19,34 @@ const getAssets = async (limit, offset, search, sort) => {
 			)
 			.json();
 
-		const asc = sort[0] === '-';
-		if (asc) {
-			sort = sort.slice(1);
-		}
-
-		// only sort if the sort param is valid
-		if (data[0][sort]) {
-			data.sort((a, b) => {
-				if (parseFloat(a[sort])) {
-					// sort param is numeric
-					return parseFloat(b[sort]) - parseFloat(a[sort]);
-				} else {
-					return a[sort].localeCompare(b[sort]);
-				}
-			});
-
-			if (asc) {
-				data.reverse();
-			}
-		}
-
+		data = sortAssets(data, sortParam);
 		return data;
 	} catch (error) {
 		return error;
 	}
+};
+
+const sortAssets = (assets, sortParam) => {
+	const asc = sortParam[0] === '-';
+	if (asc) {
+		sortParam = sortParam.slice(1);
+	}
+	// only sort if the sort param is valid
+	if (assets[0][sortParam]) {
+		assets.sort((a, b) => {
+			if (parseFloat(a[sortParam])) {
+				// sort param is numeric
+				return parseFloat(b[sortParam]) - parseFloat(a[sortParam]);
+			} else {
+				return a[sortParam].localeCompare(b[sortParam]);
+			}
+		});
+
+		if (asc) {
+			assets.reverse();
+		}
+	}
+	return assets;
 };
 
 const getAsset = async (id) => {
@@ -67,12 +70,19 @@ const convertToUsd = async (id, amount) => {
 const getAssetValueAtTime = async (id, time) => {
 	try {
 		const unixTimestamp = time.getTime();
-		const { data } = await got.get(`assets/${id}/history?interval=m1&start=${unixTimestamp}&end=${unixTimestamp + 60000}`, gotOptions).json();
+		const { data } = await got
+			.get(
+				`assets/${id}/history?interval=m1&start=${unixTimestamp}&end=${
+					unixTimestamp + 60000
+				}`,
+				gotOptions
+			)
+			.json();
 		const priceAtTime = data[0].priceUsd;
 		return priceAtTime;
 	} catch (error) {
 		return error;
 	}
-}
+};
 
-export { getAssets, getAsset, convertToUsd, getAssetValueAtTime };
+export { getAssets, getAsset, convertToUsd, getAssetValueAtTime, sortAssets };
