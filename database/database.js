@@ -23,31 +23,25 @@ const getDBConnection = async () => {
 	});
 };
 
-const clearAndCreateDB = async () => {
-	const db = await getDBConnection();
-
+const clearAndCreateDB = async (db) => {
 	await db.exec(CLEAR_SQL);
 	await db.exec(SCHEMA_SQL);
 
 	console.log('DB created');
 };
 
-const populateTestData = async () => {
-	const db = await getDBConnection();
-
+const populateTestData = async (db) => {
 	await db.exec(POPULATE_TEST_DATA);
 
 	console.log('DB Test data populated');
 };
 
-const initDB = async () => {
-	await clearAndCreateDB();
-	await populateTestData();
+const initDB = async (db) => {
+	await clearAndCreateDB(db);
+	await populateTestData(db);
 };
 
-const selectUsers = async () => {
-	const db = await getDBConnection();
-
+const selectUsers = async (db) => {
 	try {
 		return await db.all('SELECT * FROM Users');
 	} catch (error) {
@@ -55,9 +49,7 @@ const selectUsers = async () => {
 	}
 };
 
-const selectAssets = async () => {
-	const db = await getDBConnection();
-
+const selectAssets = async (db) => {
 	try {
 		return await db.all('SELECT * FROM User_Assets');
 	} catch (error) {
@@ -65,9 +57,7 @@ const selectAssets = async () => {
 	}
 };
 
-const getUser = async (id) => {
-	const db = await getDBConnection();
-
+const getUser = async (db, id) => {
 	try {
 		const user = await db.get(`SELECT * FROM Users WHERE ID = ${id}`);
 		if (user) {
@@ -80,9 +70,7 @@ const getUser = async (id) => {
 	}
 };
 
-const getMyAssets = async (id) => {
-	const db = await getDBConnection();
-
+const getMyAssets = async (db, id) => {
 	try {
 		const assets = await db.all(
 			`SELECT * FROM User_Assets WHERE User_ID = ${id}`
@@ -98,9 +86,7 @@ const getMyAssets = async (id) => {
 	}
 };
 
-const getMyAsset = async (userId, assetId) => {
-    const db = await getDBConnection();
-
+const getMyAsset = async (db, userId, assetId) => {
     try {
         const asset = await db.get(
             `SELECT * From User_Assets WHERE User_ID = ${userId} AND AssetID = "${assetId}"`
@@ -111,9 +97,7 @@ const getMyAsset = async (userId, assetId) => {
     }
 }
 
-const addAssets = async (userId, assetId, amount) => {
-	const db = await getDBConnection();
-
+const addAssets = async (db, userId, assetId, amount) => {
 	try {
 		const existingAsset = await db.get(
 			`SELECT * From User_Assets WHERE User_ID = ${userId} AND AssetID = "${assetId}"`
@@ -137,4 +121,4 @@ const addAssets = async (userId, assetId, amount) => {
 	}
 };
 
-export { initDB, selectUsers, selectAssets, getUser, getMyAssets, getMyAsset, addAssets };
+export { getDBConnection, initDB, selectUsers, selectAssets, getUser, getMyAssets, getMyAsset, addAssets };

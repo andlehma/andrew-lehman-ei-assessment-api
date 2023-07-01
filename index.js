@@ -2,6 +2,7 @@ import express from 'express';
 
 import { getAssets, getAsset, convertToUsd, getAssetValueAtTime } from './coincapHelper.js';
 import {
+	getDBConnection,
 	initDB,
 	selectUsers,
 	selectAssets,
@@ -16,6 +17,8 @@ const port = 3000;
 
 const maxPageSize = 2000;
 const defaultPageSize = 100;
+
+const dbConnection = await getDBConnection();
 
 app.use(express.json());
 
@@ -60,23 +63,23 @@ app.get('/convert/:id', async (req, res) => {
 });
 
 app.get('/users', async (req, res) => {
-	const users = await selectUsers();
+	const users = await selectUsers(dbConnection);
 	res.send(users);
 });
 
 app.get('/user/:id', async (req, res) => {
-	const user = await getUser(req.params.id);
+	const user = await getUser(dbConnection, req.params.id);
 	res.send(user);
 });
 
 app.get('/userAssets', async (req, res) => {
-	const assets = await selectAssets();
+	const assets = await selectAssets(dbConnection);
 	res.send(assets);
 });
 
 app.get('/myAssets', async (req, res) => {
 	checkAuth(req, async (userId) => {
-		const assets = await getMyAssets(userId);
+		const assets = await getMyAssets(dbConnection, userId);
 		const totalValue = assets
 			.reduce((acc, curr) => acc + curr.valueInUSD, 0)
 			.toFixed(2);
@@ -87,14 +90,14 @@ app.get('/myAssets', async (req, res) => {
 app.post('/addAssets', async (req, res) => {
 	checkAuth(req, async (userId) => {
 		// should probably check that the assetId is valid
-		const asset = await addAssets(userId, req.body.assetId, req.body.amount);
+		const asset = await addAssets(dbConnection, userId, req.body.assetId, req.body.amount);
 		res.send(asset);
 	});
 });
 
 app.get('/gainOverTime/:assetId', async (req, res) => {
 	checkAuth(req, async (userId) => {
-		const currentAsset = await getMyAsset(userId, req.params.assetId);
+		const currentAsset = await getMyAsset(dbConnection, userId, req.params.assetId);
 		const amountHeld = currentAsset.Quantity;
 		const dateAcquired = new Date(req.query.acquired);
 		const initialValue = await getAssetValueAtTime(req.params.assetId, dateAcquired) * amountHeld;
@@ -110,6 +113,6 @@ app.get('/gainOverTime/:assetId', async (req, res) => {
 });
 
 app.listen(port, async () => {
-	await initDB();
+	await initDB(dbConnection);
 	console.log(`API running on port ${port}`);
 });
