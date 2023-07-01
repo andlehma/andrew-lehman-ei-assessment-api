@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "serve": "cross-env NODE_ENV=dev node index.js",
-    "test": "cross-env NODE_ENV=test node --experimental-vm-modules ./node_modules/.bin/jest"
+    "test": "cross-env NODE_ENV=test node --experimental-vm-modules ./node_modules/jest/bin/jest"
   },
   "author": "Andrew Lehman",
   "license": "ISC",
