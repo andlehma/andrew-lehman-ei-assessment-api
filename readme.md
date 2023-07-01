@@ -93,6 +93,3 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 
 ## Transactions
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
-
-## Integration tests
-I would like to have a suite of integration tests which stands up an instance of the API and mocks the database and the Coincap API. Right now, there are only unit tests, which are limited given the simplicity of the API. There just aren't that many units to test.

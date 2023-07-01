@@ -12,15 +12,15 @@ const gotOptions = {
 
 const getAssets = async (limit, offset, search, sortParam) => {
 	try {
-		const { data } = await got
+		const resp = await got
 			.get(
 				`assets?limit=${limit}&offset=${offset}&search=${search}`,
 				gotOptions
 			)
 			.json();
 
-		data = sortAssets(data, sortParam);
-		return data;
+		const sortedAssets = sortAssets(resp.data, sortParam);
+		return sortedAssets;
 	} catch (error) {
 		return error;
 	}
