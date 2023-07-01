@@ -1,6 +1,11 @@
 import express from 'express';
 
-import { getAssets, getAsset, convertToUsd, getAssetValueAtTime } from './coincapHelper.js';
+import {
+	getAssets,
+	getAsset,
+	convertToUsd,
+	getAssetValueAtTime,
+} from './coincapHelper.js';
 import {
 	getDBConnection,
 	initDB,
@@ -11,6 +16,7 @@ import {
 	addAssets,
 	getMyAsset,
 } from './database/database.js';
+import { checkAuth } from './checkAuth.js';
 
 const app = express();
 const port = 3000;
@@ -21,21 +27,6 @@ const defaultPageSize = 100;
 const dbConnection = await getDBConnection();
 
 app.use(express.json());
-
-const checkAuth = (req, callback) => {
-	if (req.headers.authorization) {
-		if (req.headers.authorization.startsWith('Bearer ')) {
-			const userId = parseInt(
-				req.headers.authorization.slice('Bearer '.length)
-			);
-			callback(userId);
-		} else {
-			res.send('Authorization should be in the form of a bearer token');
-		}
-	} else {
-		res.send('Authorization required');
-	}
-};
 
 app.get('/assets', async (req, res) => {
 	const limit =
@@ -78,38 +69,61 @@ app.get('/userAssets', async (req, res) => {
 });
 
 app.get('/myAssets', async (req, res) => {
-	checkAuth(req, async (userId) => {
-		const assets = await getMyAssets(dbConnection, userId);
-		const totalValue = assets
-			.reduce((acc, curr) => acc + curr.valueInUSD, 0)
-			.toFixed(2);
-		res.send({ totalValue: totalValue, assets: assets });
-	});
+	try {
+		checkAuth(req, async (userId) => {
+			const assets = await getMyAssets(dbConnection, userId);
+			const totalValue = assets
+				.reduce((acc, curr) => acc + curr.valueInUSD, 0)
+				.toFixed(2);
+			res.send({ totalValue: totalValue, assets: assets });
+		});
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post('/addAssets', async (req, res) => {
-	checkAuth(req, async (userId) => {
-		// should probably check that the assetId is valid
-		const asset = await addAssets(dbConnection, userId, req.body.assetId, req.body.amount);
-		res.send(asset);
-	});
+	try {
+		checkAuth(req, async (userId) => {
+			// should probably check that the assetId is valid
+			const asset = await addAssets(
+				dbConnection,
+				userId,
+				req.body.assetId,
+				req.body.amount
+			);
+			res.send(asset);
+		});
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.get('/gainOverTime/:assetId', async (req, res) => {
-	checkAuth(req, async (userId) => {
-		const currentAsset = await getMyAsset(dbConnection, userId, req.params.assetId);
-		const amountHeld = currentAsset.Quantity;
-		const dateAcquired = new Date(req.query.acquired);
-		const initialValue = await getAssetValueAtTime(req.params.assetId, dateAcquired) * amountHeld;
-		const nowValue = await convertToUsd(req.params.assetId, amountHeld);
-		const diff = nowValue - initialValue;
-		res.send({
-			valueAtTime: initialValue.toFixed(2),
-			valueNow: nowValue.toFixed(2),
-			gainUSD: diff.toFixed(2),
-			gainPercent: ((diff) / initialValue) * 100
+	try {
+		checkAuth(req, async (userId) => {
+			const currentAsset = await getMyAsset(
+				dbConnection,
+				userId,
+				req.params.assetId
+			);
+			const amountHeld = currentAsset.Quantity;
+			const dateAcquired = new Date(req.query.acquired);
+			const initialValue =
+				(await getAssetValueAtTime(req.params.assetId, dateAcquired)) *
+				amountHeld;
+			const nowValue = await convertToUsd(req.params.assetId, amountHeld);
+			const diff = nowValue - initialValue;
+			res.send({
+				valueAtTime: initialValue.toFixed(2),
+				valueNow: nowValue.toFixed(2),
+				gainUSD: diff.toFixed(2),
+				gainPercent: (diff / initialValue) * 100,
+			});
 		});
-	});
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.listen(port, async () => {
