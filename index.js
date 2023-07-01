@@ -85,7 +85,19 @@ app.get('/myAssets', async (req, res) => {
 app.post('/addAssets', async (req, res) => {
 	try {
 		checkAuth(req, async (userId) => {
-			// should probably check that the assetId is valid
+			if (!req.body.assetId) {
+				res.send('Asset ID required');
+				return;
+			}
+			if (!req.body.amount) {
+				res.send('Amount required');
+				return;
+			}
+			const assetDetails = await getAsset(req.body.assetId);
+			if (!assetDetails.id) {
+				res.send(`Invalid asset id: ${req.body.assetId}`);
+				return;
+			}
 			const asset = await addAssets(
 				dbConnection,
 				userId,
