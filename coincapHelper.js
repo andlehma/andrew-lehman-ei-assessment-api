@@ -51,8 +51,8 @@ const sortAssets = (assets, sortParam) => {
 
 const getAsset = async (id) => {
 	try {
-		const { data } = await got.get(`assets/${id}`, gotOptions).json();
-		return data;
+		const resp = await got.get(`assets/${id}`, gotOptions).json();
+		return resp.data;
 	} catch (error) {
 		return error;
 	}

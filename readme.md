@@ -6,7 +6,7 @@ I was given the choice to create either a frontend or an API, and I chose to cre
 # Running Locally
 ```
 npm install
-node index.js
+npm run serve
 ```
 
 By the time I send this to the team at EI, I will have packaged it into an executable.
@@ -43,6 +43,18 @@ Converts the specified asset to usd. Provide an `amount` in the query parameters
 ## GET `/users`
 
 Lists all users in the database. Definitely wouldn't want to have this in a production app, but it's useful for this demo.
+
+## POST `/users`
+
+Create a new user. A more robust user creation solution is out of scope for this project.
+
+Expects a body with a user id and a user name:
+```json
+{
+    "id": 3,
+    "userName": "Andrew Lehman"
+}
+```
 
 ## GET `/user/{{id}}`
 
@@ -93,3 +105,6 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 
 ## Transactions
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
+
+## Integration Test Data
+Currently, the data in the integration tests just lives in a SQL file. I would prefer to populate the test db with generated data using a framework like faker.js

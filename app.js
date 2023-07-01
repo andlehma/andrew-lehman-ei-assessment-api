@@ -14,6 +14,7 @@ import {
 	getMyAssets,
 	addAssets,
 	getMyAsset,
+	createUser,
 } from './database/database.js';
 import { checkAuth } from './checkAuth.js';
 
@@ -54,6 +55,23 @@ app.get('/convert/:id', async (req, res) => {
 app.get('/users', async (req, res) => {
 	const users = await selectUsers(dbConnection);
 	res.send(users);
+});
+
+app.post('/users', async (req, res) => {
+	try {
+		if (!req.body.id) {
+			res.send('User ID required');
+			return;
+		}
+		if (!req.body.userName) {
+			res.send('User Name required');
+			return;
+		}
+		const user = await createUser(dbConnection, req.body.id, req.body.userName);
+		res.send(user);
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.get('/user/:id', async (req, res) => {
@@ -136,4 +154,4 @@ app.get('/gainOverTime/:assetId', async (req, res) => {
 	}
 });
 
-export { app }
+export { app };
