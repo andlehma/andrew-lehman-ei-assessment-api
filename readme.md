@@ -9,8 +9,7 @@ npm install
 npm run serve
 ```
 
-By the time I send this to the team at EI, I will have packaged it into an executable.
-Which means that if anyone is reading this, they must have gone back on the earlier commits ;)
+API will be live on `localhost:3000` or whatever port is specified in the environment variable `PORT`.
 
 ## Testing
 

@@ -44,7 +44,7 @@ const initDB = async (db) => {
 	if (environment === 'test') {
 		await clearAndCreateDB(db);
 		await populateTestData(db);
-	} else if (environment === 'dev') {
+	} else {
 		await db.exec(SCHEMA_SQL); // idempotent
 	}
 };
