@@ -64,4 +64,15 @@ const convertToUsd = async (id, amount) => {
 	}
 };
 
-export { getAssets, getAsset, convertToUsd };
+const getAssetValueAtTime = async (id, time) => {
+	try {
+		const unixTimestamp = time.getTime();
+		const { data } = await got.get(`assets/${id}/history?interval=m1&start=${unixTimestamp}&end=${unixTimestamp + 60000}`, gotOptions).json();
+		const priceAtTime = data[0].priceUsd;
+		return priceAtTime;
+	} catch (error) {
+		return error;
+	}
+}
+
+export { getAssets, getAsset, convertToUsd, getAssetValueAtTime };

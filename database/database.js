@@ -84,7 +84,7 @@ const getMyAssets = async (id) => {
 	const db = await getDBConnection();
 
 	try {
-		let assets = await db.all(
+		const assets = await db.all(
 			`SELECT * FROM User_Assets WHERE User_ID = ${id}`
 		);
 		return await Promise.all(assets.map(async (asset) => {
@@ -97,6 +97,19 @@ const getMyAssets = async (id) => {
 		return `Error getting assets: ${error}`;
 	}
 };
+
+const getMyAsset = async (userId, assetId) => {
+    const db = await getDBConnection();
+
+    try {
+        const asset = await db.get(
+            `SELECT * From User_Assets WHERE User_ID = ${userId} AND AssetID = "${assetId}"`
+        );
+        return asset;
+    } catch (error) {
+        return `Error getting asset: ${error}`
+    }
+}
 
 const addAssets = async (userId, assetId, amount) => {
 	const db = await getDBConnection();
@@ -124,4 +137,4 @@ const addAssets = async (userId, assetId, amount) => {
 	}
 };
 
-export { initDB, selectUsers, selectAssets, getUser, getMyAssets, addAssets };
+export { initDB, selectUsers, selectAssets, getUser, getMyAssets, getMyAsset, addAssets };

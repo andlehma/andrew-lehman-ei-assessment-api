@@ -72,6 +72,12 @@ Requires a body with an asset ID and an amount
 
 To remove assets, provide a negative amount.
 
+## GET `/gainOverTime/{{id}}`
+
+Returns net gain/loss over a period of holding a specified asset.
+
+Expects an `acquired` parameter, e.g. `/gainOverTime/bitcoin?acquired=2018-06-29`. In a real app, we would store the date that the user acquired the asset. That functionality is out of scope for this demo, so this endpoint requires you to specity a date. Format is anything Javascript can parse into a `Date` object.
+
 # Limitations
 Because of the time constraint, the scope of this project is quite limited.
 
@@ -85,5 +91,4 @@ I'm using a SQLite database for this project. The database is destroyed and re-c
 A real app like this would have a database table of transactions, but I have decided that such a table is out of scope for this project.
 
 # TODO
-* Allow users to get net gain/loss over period of holding
 * Add test suite

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { getAssets, getAsset, convertToUsd } from './coincapHelper.js';
+import { getAssets, getAsset, convertToUsd, getAssetValueAtTime } from './coincapHelper.js';
 import {
 	initDB,
 	selectUsers,
@@ -8,6 +8,7 @@ import {
 	getUser,
 	getMyAssets,
 	addAssets,
+	getMyAsset,
 } from './database/database.js';
 
 const app = express();
@@ -88,6 +89,23 @@ app.post('/addAssets', async (req, res) => {
 		// should probably check that the assetId is valid
 		const asset = await addAssets(userId, req.body.assetId, req.body.amount);
 		res.send(asset);
+	});
+});
+
+app.get('/gainOverTime/:assetId', async (req, res) => {
+	checkAuth(req, async (userId) => {
+		const currentAsset = await getMyAsset(userId, req.params.assetId);
+		const amountHeld = currentAsset.Quantity;
+		const dateAcquired = new Date(req.query.acquired);
+		const initialValue = await getAssetValueAtTime(req.params.assetId, dateAcquired) * amountHeld;
+		const nowValue = await convertToUsd(req.params.assetId, amountHeld);
+		const diff = nowValue - initialValue;
+		res.send({
+			valueAtTime: initialValue.toFixed(2),
+			valueNow: nowValue.toFixed(2),
+			gainUSD: diff.toFixed(2),
+			gainPercent: ((diff) / initialValue) * 100
+		});
 	});
 });
 
