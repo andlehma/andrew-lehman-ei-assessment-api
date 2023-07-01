@@ -5,12 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "serve": "NODE_ENV=dev node index.js",
-    "test": "NODE_ENV=test node --experimental-vm-modules ./node_modules/.bin/jest"
+    "serve": "cross-env NODE_ENV=dev node index.js",
+    "test": "cross-env NODE_ENV=test node --experimental-vm-modules ./node_modules/.bin/jest"
   },
   "author": "Andrew Lehman",
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "got": "^13.0.0",
