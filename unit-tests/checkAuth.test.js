@@ -2,26 +2,36 @@ import { checkAuth } from '../checkAuth.js';
 import { jest } from '@jest/globals';
 
 describe('checkAuth', () => {
-	test('requires authorization header', () => {
+	const mockedDBConnection = {
+		get: () => {
+			return { id: 17 };
+		},
+	};
+
+	test('requires authorization header', async () => {
 		const mockedRequest = { headers: {} };
 		const mockedCallback = () => {};
-		expect(() => checkAuth(mockedRequest, mockedCallback)).toThrow(
-			'Authorization required'
-		);
+		await expect(
+			async () =>
+				await checkAuth(mockedDBConnection, mockedRequest, mockedCallback)
+		).rejects.toThrow('Authorization required');
 	});
 
-	test('requires authorization header to be in the form of a bearer token', () => {
+	test('requires authorization header to be in the form of a bearer token', async () => {
 		const mockedRequest = { headers: { authorization: 'asdf' } };
 		const mockedCallback = () => {};
-		expect(() => checkAuth(mockedRequest, mockedCallback)).toThrow(
-			'Authorization should be in the form of a bearer token'
-		);
+		await expect(
+			async () =>
+				await checkAuth(mockedDBConnection, mockedRequest, mockedCallback)
+		).rejects.toThrow('Authorization should be in the form of a bearer token');
+		expect(true).toBe(true);
 	});
 
-	test('runs callback if auth is good', () => {
+	test('runs callback if auth is good', async () => {
 		const mockedRequest = { headers: { authorization: 'Bearer 1234' } };
+		console.log(mockedRequest.headers.authorization);
 		const mockedCallback = jest.fn();
-		checkAuth(mockedRequest, mockedCallback);
+		await checkAuth(mockedDBConnection, mockedRequest, mockedCallback);
 		expect(mockedCallback).toHaveBeenCalledWith(1234);
 	});
 });

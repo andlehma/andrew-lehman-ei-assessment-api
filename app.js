@@ -86,7 +86,7 @@ app.get('/userAssets', async (req, res) => {
 
 app.get('/myAssets', async (req, res) => {
 	try {
-		checkAuth(req, async (userId) => {
+		await checkAuth(dbConnection, req, async (userId) => {
 			const assets = await getMyAssets(dbConnection, userId);
 			const totalValue = assets
 				.reduce((acc, curr) => acc + curr.valueInUSD, 0)
@@ -100,7 +100,7 @@ app.get('/myAssets', async (req, res) => {
 
 app.post('/addAssets', async (req, res) => {
 	try {
-		checkAuth(req, async (userId) => {
+		await checkAuth(dbConnection, req, async (userId) => {
 			if (!req.body.assetId) {
 				res.send('Asset ID required');
 				return;
@@ -129,7 +129,7 @@ app.post('/addAssets', async (req, res) => {
 
 app.get('/gainOverTime/:assetId', async (req, res) => {
 	try {
-		checkAuth(req, async (userId) => {
+		await checkAuth(dbConnection, req, async (userId) => {
 			const currentAsset = await getMyAsset(
 				dbConnection,
 				userId,
